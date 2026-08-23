@@ -72,6 +72,10 @@ export function AppLayout() {
           </NavLink>
         ))}
       </nav>
+
+      <div className="pb-24 pt-6 text-center text-[11px] text-ink-soft/60 sm:pb-4">
+        Developed by <span className="font-medium text-ink-soft">PARLE</span>
+      </div>
     </div>
   );
 }
