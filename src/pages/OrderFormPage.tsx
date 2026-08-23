@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Combobox } from "@/components/ui/combobox";
 import { LoadingCard } from "@/components/orders/LoadingCard";
 import { WhatsAppDialog } from "@/components/orders/WhatsAppDialog";
 import { useProducts } from "@/hooks/useProducts";
@@ -185,7 +186,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-16">
+    <div className="flex flex-col gap-6 pb-40 sm:pb-16">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link to="/orders">
@@ -208,21 +209,18 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
               type="date"
               value={draft.order_date}
               onChange={(e) => setDraft((d) => ({ ...d, order_date: e.target.value }))}
+              className="h-11 sm:h-10"
             />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>Order Party</Label>
-            <Input
-              list="party-suggestions"
+            <Combobox
               value={draft.party_name_snapshot}
-              onChange={(e) => handlePartyNameChange(e.target.value)}
+              onChange={handlePartyNameChange}
+              onSelectSuggestion={handlePartyNameChange}
+              suggestions={parties.map((p) => p.name)}
               placeholder="Type or pick a party name"
             />
-            <datalist id="party-suggestions">
-              {parties.map((p) => (
-                <option key={p.id} value={p.name} />
-              ))}
-            </datalist>
             {parties.length === 0 ? (
               <p className="text-xs text-ink-soft">
                 Type a new party name, or{" "}
@@ -244,6 +242,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
               onChange={(e) => setDraft((d) => ({ ...d, party_contact_snapshot: e.target.value }))}
               placeholder="Phone number"
               inputMode="tel"
+              className="h-11 sm:h-10"
             />
           </div>
         </CardContent>
@@ -345,15 +344,39 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
           )}
 
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-            <Button variant="outline" onClick={() => handleSave(true)} disabled={saving}>
+            <Button variant="outline" onClick={() => handleSave(true)} disabled={saving} className="hidden sm:inline-flex">
               <MessageCircle /> Save &amp; Copy WhatsApp
             </Button>
-            <Button onClick={() => handleSave(false)} disabled={saving}>
+            <Button onClick={() => handleSave(false)} disabled={saving} className="hidden sm:inline-flex">
               <Save /> {saving ? "Saving…" : "Save Order"}
             </Button>
           </div>
         </CardContent>
       </Card>
+
+      {/* Mobile only: pinned action bar so Save is always one tap away, even on a long order. */}
+      <div
+        className="fixed inset-x-0 bottom-16 z-20 border-t border-line bg-white/95 px-4 py-2.5 backdrop-blur-sm sm:hidden"
+        style={{ paddingBottom: "calc(0.625rem + env(safe-area-inset-bottom))" }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-soft">Closing Balance</div>
+            <div className="truncate font-mono-num text-base font-semibold text-ink">{formatCurrency(totals.closingBalance)}</div>
+          </div>
+          <Button variant="outline" size="icon" onClick={() => handleSave(true)} disabled={saving} title="Save & Copy WhatsApp">
+            <MessageCircle className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => handleSave(false)} disabled={saving} className="h-11">
+            <Save /> {saving ? "Saving…" : "Save"}
+          </Button>
+        </div>
+        {error && (
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-rust-600">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
+          </div>
+        )}
+      </div>
 
       <WhatsAppDialog
         message={savedOrder ? generateWhatsAppMessage(savedOrder) : null}

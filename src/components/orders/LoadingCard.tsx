@@ -109,14 +109,14 @@ export function LoadingCard({
 
         <Collapsible.Content>
           <div className="flex flex-col gap-4 border-t border-line px-5 py-5">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="col-span-2 flex flex-col gap-1.5 sm:col-span-1">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+              <div className="flex flex-col gap-1.5">
                 <Label>Loading type</Label>
                 <Select
                   value={isCustomType ? "Other" : loading.loading_type}
                   onValueChange={(v) => updateField("loading_type", v === "Other" ? "" : v)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 sm:h-10">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -133,15 +133,17 @@ export function LoadingCard({
                     onChange={(e) => updateField("loading_type", e.target.value)}
                     placeholder="Type loading type"
                     autoFocus
+                    className="h-11 sm:h-10"
                   />
                 )}
               </div>
-              <div className="col-span-2 flex flex-col gap-1.5 sm:col-span-1">
+              <div className="flex flex-col gap-1.5">
                 <Label>Loading party</Label>
                 <Input
                   value={loading.loading_party}
                   onChange={(e) => updateField("loading_party", e.target.value)}
                   placeholder="e.g. Amrit Singh"
+                  className="h-11 sm:h-10"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -150,6 +152,7 @@ export function LoadingCard({
                   value={loading.location}
                   onChange={(e) => updateField("location", e.target.value)}
                   placeholder="Village / farm"
+                  className="h-11 sm:h-10"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -159,6 +162,7 @@ export function LoadingCard({
                   onChange={(e) => updateField("contact", e.target.value)}
                   placeholder="Phone number"
                   inputMode="tel"
+                  className="h-11 sm:h-10"
                 />
               </div>
             </div>
@@ -242,24 +246,25 @@ function ItemRow({
   }
 
   return (
-    <div className="grid grid-cols-12 items-center gap-2 rounded-xl border border-line bg-paper p-2.5">
-      <div className="col-span-12 sm:col-span-4">
-        <Select value={item.product_id ?? undefined} onValueChange={handleProductChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select product">{item.product_name_snapshot || undefined}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {products.map((p) => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.name} ({p.type === "PELLET" ? "Pellet" : "Mash"})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="col-span-3 sm:col-span-2">
+    <div className="flex flex-col gap-2 rounded-xl border border-line bg-paper p-3">
+      {/* Product — always full width, it's the field people scan first */}
+      <Select value={item.product_id ?? undefined} onValueChange={handleProductChange}>
+        <SelectTrigger className="h-11">
+          <SelectValue placeholder="Select product">{item.product_name_snapshot || undefined}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {products.map((p) => (
+            <SelectItem key={p.id} value={p.id}>
+              {p.name} ({p.type === "PELLET" ? "Pellet" : "Mash"})
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* Mobile: stacked 2-up rows with 44px touch targets. Desktop (sm+): one compact row. */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-[6rem_5rem_6rem_1fr_auto_auto]">
         <Select value={String(item.pack_size)} onValueChange={handlePackSizeChange}>
-          <SelectTrigger>
+          <SelectTrigger className="h-11 sm:h-10">
             <SelectValue placeholder="Size" />
           </SelectTrigger>
           <SelectContent>
@@ -270,8 +275,7 @@ function ItemRow({
             ))}
           </SelectContent>
         </Select>
-      </div>
-      <div className="col-span-3 sm:col-span-2">
+
         <Input
           type="number"
           inputMode="numeric"
@@ -282,9 +286,9 @@ function ItemRow({
             const v = e.target.value;
             onChange({ quantity: v === "" ? "" : Number(v) });
           }}
+          className="h-11 sm:h-10"
         />
-      </div>
-      <div className="col-span-3 sm:col-span-2">
+
         {item.pricing_type !== "FREE" && rateNeedsManualEntry ? (
           <Input
             type="number"
@@ -294,35 +298,38 @@ function ItemRow({
             value={item.rate_snapshot || ""}
             onChange={(e) => onChange({ rate_snapshot: e.target.value === "" ? 0 : Number(e.target.value) })}
             title="No listed rate for this bag size — enter it manually"
+            className="h-11 sm:h-10"
           />
         ) : (
-          <div className="flex h-10 items-center rounded-lg border border-line bg-paper-dim px-3 font-mono-num text-sm text-ink-soft">
+          <div className="flex h-11 items-center rounded-lg border border-line bg-paper-dim px-3 font-mono-num text-sm text-ink-soft sm:h-10">
             {item.pricing_type === "FREE" ? "FREE" : formatCurrency(item.rate_snapshot)}
           </div>
         )}
-      </div>
-      <div className="col-span-3 sm:col-span-2">
-        <div className="flex h-10 items-center rounded-lg px-3 font-mono-num text-sm font-semibold text-brand-700">
+
+        <div className="flex h-11 items-center justify-end rounded-lg px-3 font-mono-num text-sm font-semibold text-brand-700 sm:h-10 sm:justify-start sm:px-0">
           {formatCurrency(amount)}
         </div>
-      </div>
-      <div className="col-span-8 flex items-center gap-2 sm:col-span-1">
+
         <button
           type="button"
           onClick={() => onChange({ pricing_type: item.pricing_type === "FREE" ? "NORMAL" : "FREE" })}
-          className="w-full"
+          className="col-span-2 sm:col-span-1"
         >
           <Badge
             variant={item.pricing_type === "FREE" ? "amber" : "muted"}
-            className="w-full cursor-pointer justify-center"
+            className="flex h-11 w-full cursor-pointer items-center justify-center sm:h-10 sm:w-20"
           >
             {item.pricing_type === "FREE" ? "Free" : "Normal"}
           </Badge>
         </button>
-      </div>
-      <div className="col-span-1 flex justify-end">
-        <Button variant="ghost" size="icon-sm" onClick={onRemove}>
-          <Trash2 className="h-3.5 w-3.5" />
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          className="col-span-2 h-11 w-full sm:col-span-1 sm:h-10 sm:w-10"
+        >
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </div>
