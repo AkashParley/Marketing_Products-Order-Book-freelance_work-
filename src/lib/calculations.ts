@@ -76,10 +76,29 @@ export function calculateLoadingTotals(loading: CalcLoading): LoadingTotals {
   };
 }
 
-/** C.D. rupee amount = Gross Amount × cd_percent / 100. */
-export function calculateCdAmount(grossAmount: number, cdPercent: number): number {
+/** Generic helper: `base` × `percent` / 100, rounded to 2 decimals. */
+export function calculateCdAmount(base: number, cdPercent: number): number {
   const pct = Number.isFinite(cdPercent) ? cdPercent : 0;
-  return round2((grossAmount * pct) / 100);
+  return round2((base * pct) / 100);
+}
+
+/**
+ * Closing Balance = (Gross Amount − Difference − Freight) minus a C.D.%
+ * discount taken off that same base.
+ *
+ *   base     = Gross Amount − Difference − Freight
+ *   cdAmount = base × C.D.% / 100
+ *   Closing Balance = base − cdAmount
+ */
+export function calculateClosingBalance(
+  grossAmount: number,
+  adjustments: CalcAdjustments
+): number {
+  const diff = Number.isFinite(adjustments.difference) ? adjustments.difference : 0;
+  const freight = Number.isFinite(adjustments.freight) ? adjustments.freight : 0;
+  const base = grossAmount - diff - freight;
+  const cdAmount = calculateCdAmount(base, adjustments.cd_percent);
+  return round2(base - cdAmount);
 }
 
 export function calculateOrderTotals(order: {
@@ -98,8 +117,12 @@ export function calculateOrderTotals(order: {
   }
 
   grossAmount = round2(grossAmount);
-  const cdAmount = calculateCdAmount(grossAmount, order.adjustments.cd_percent);
   const closingBalance = calculateClosingBalance(grossAmount, order.adjustments);
+  // The rupee amount C.D.% actually removed from the base — i.e. the
+  // difference between (Gross − Difference − Freight) and Closing Balance.
+  const cdAmount = round2(
+    grossAmount - order.adjustments.difference - order.adjustments.freight - closingBalance
+  );
 
   return {
     totalLoadings: order.loadings.length,
@@ -110,16 +133,6 @@ export function calculateOrderTotals(order: {
     cdAmount,
     closingBalance,
   };
-}
-
-export function calculateClosingBalance(
-  grossAmount: number,
-  adjustments: CalcAdjustments
-): number {
-  const diff = Number.isFinite(adjustments.difference) ? adjustments.difference : 0;
-  const freight = Number.isFinite(adjustments.freight) ? adjustments.freight : 0;
-  const cdAmount = calculateCdAmount(grossAmount, adjustments.cd_percent);
-  return round2(grossAmount - diff - freight - cdAmount);
 }
 
 // ── Validation helpers ──────────────────────────────────────────────────

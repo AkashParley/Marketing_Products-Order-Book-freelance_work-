@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Copy, ExternalLink, MessageCircle } from "lucide-react";
+import { Copy } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { whatsappShareUrl } from "@/lib/whatsapp";
 import { useToast } from "@/components/ui/toast";
 
@@ -45,7 +46,7 @@ export function WhatsAppDialog({
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-brand-600" /> WhatsApp preview
+            <WhatsAppIcon className="h-6 w-6" /> WhatsApp preview
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[50vh] overflow-y-auto rounded-xl border border-line bg-paper-dim p-4">
@@ -56,7 +57,7 @@ export function WhatsAppDialog({
             <Copy /> {copied ? "Copied" : "Copy Message"}
           </Button>
           <Button onClick={handleOpen}>
-            <ExternalLink /> Open WhatsApp
+            <WhatsAppIcon className="h-4 w-4" /> Open WhatsApp
           </Button>
         </DialogFooter>
       </DialogContent>

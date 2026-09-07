@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, Plus, MessageCircle, Save, AlertCircle } from "lucide-react";
+import { ArrowLeft, Plus, Save, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Combobox } from "@/components/ui/combobox";
 import { LoadingCard } from "@/components/orders/LoadingCard";
 import { WhatsAppDialog } from "@/components/orders/WhatsAppDialog";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { useProducts } from "@/hooks/useProducts";
 import { useParties } from "@/hooks/useParties";
 import { useToast } from "@/components/ui/toast";
@@ -312,7 +313,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>C.D. (% of Gross Amount)</Label>
+              <Label>C.D. (% of Base Amount)</Label>
               <div className="relative">
                 <Input
                   type="number"
@@ -327,7 +328,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">%</span>
               </div>
               <p className="text-xs text-ink-soft">
-                = {formatCurrency(totals.cdAmount)}
+                Base {formatCurrency(totals.baseAmount)} × {draft.adjustments.cd_percent || 0}% = {formatCurrency(totals.cdAmount)}
               </p>
             </div>
           </div>
@@ -345,7 +346,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
 
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => handleSave(true)} disabled={saving} className="hidden sm:inline-flex">
-              <MessageCircle /> Save &amp; Copy WhatsApp
+              <WhatsAppIcon className="h-4 w-4" /> Save &amp; Copy WhatsApp
             </Button>
             <Button onClick={() => handleSave(false)} disabled={saving} className="hidden sm:inline-flex">
               <Save /> {saving ? "Saving…" : "Save Order"}
@@ -365,7 +366,7 @@ export default function OrderFormPage({ mode }: { mode: "create" | "edit" }) {
             <div className="truncate font-mono-num text-base font-semibold text-ink">{formatCurrency(totals.closingBalance)}</div>
           </div>
           <Button variant="outline" size="icon" onClick={() => handleSave(true)} disabled={saving} title="Save & Copy WhatsApp">
-            <MessageCircle className="h-4 w-4" />
+            <WhatsAppIcon className="h-4 w-4" />
           </Button>
           <Button onClick={() => handleSave(false)} disabled={saving} className="h-11">
             <Save /> {saving ? "Saving…" : "Save"}

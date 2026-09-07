@@ -6,7 +6,6 @@ import {
   Eye,
   Pencil,
   Copy,
-  MessageCircle,
   Trash2,
   ClipboardList,
   Calendar,
@@ -29,9 +28,10 @@ import { useOrders } from "@/hooks/useOrders";
 import { store } from "@/lib/store";
 import { useToast } from "@/components/ui/toast";
 import { calculateOrderTotals } from "@/lib/calculations";
+import { generateWhatsAppMessage } from "@/lib/whatsapp";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { WhatsAppDialog } from "@/components/orders/WhatsAppDialog";
-import { generateWhatsAppMessage } from "@/lib/whatsapp";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import type { Order } from "@/types";
 
 export default function OrdersPage() {
@@ -180,7 +180,7 @@ export default function OrdersPage() {
                       <Copy className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon-sm" title="WhatsApp" onClick={() => setWhatsappOrder(order)}>
-                      <MessageCircle className="h-4 w-4" />
+                      <WhatsAppIcon className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon-sm" title="Delete" onClick={() => setDeleteTarget(order)}>
                       <Trash2 className="h-4 w-4" />

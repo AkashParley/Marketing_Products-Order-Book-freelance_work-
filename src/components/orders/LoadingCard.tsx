@@ -1,12 +1,13 @@
 import { useState } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { ChevronDown, Trash2, Plus, GripVertical, MessageCircle } from "lucide-react";
+import { ChevronDown, Trash2, Plus, GripVertical } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { calculateLineAmount, calculateLoadingTotals } from "@/lib/calculations";
 import { formatCurrency, formatNumber, clientId } from "@/lib/utils";
 import {
@@ -102,7 +103,7 @@ export function LoadingCard({
                 onCopyWhatsapp();
               }}
             >
-              <MessageCircle className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
             </Button>
           )}
         </div>

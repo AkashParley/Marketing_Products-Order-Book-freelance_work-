@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, Pencil, Copy, MessageCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { WhatsAppDialog } from "@/components/orders/WhatsAppDialog";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { store } from "@/lib/store";
 import { useToast } from "@/components/ui/toast";
 import { calculateLineAmount, calculateLoadingTotals, calculateOrderTotals } from "@/lib/calculations";
@@ -104,7 +105,7 @@ export default function OrderViewPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => setWhatsappOpen(true)}>
-            <MessageCircle /> WhatsApp
+            <WhatsAppIcon className="h-4 w-4" /> WhatsApp
           </Button>
           <Button variant="outline" size="sm" onClick={handleDuplicate}>
             <Copy /> Duplicate
@@ -150,7 +151,7 @@ export default function OrderViewPage() {
                       title="Copy this loading to WhatsApp"
                       onClick={() => setLoadingWhatsappIdx(idx)}
                     >
-                      <MessageCircle className="h-4 w-4" />
+                      <WhatsAppIcon className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -198,6 +199,7 @@ export default function OrderViewPage() {
             <Row label="Gross Amount" value={formatCurrency(totals.grossAmount)} />
             <Row label="Difference" value={`− ${formatCurrency(order.adjustments.difference)}`} muted />
             <Row label="Freight" value={`− ${formatCurrency(order.adjustments.freight)}`} muted />
+            <Row label="Base Amount" value={formatCurrency(totals.baseAmount)} />
             <Row label={`C.D. (${formatNumber(order.adjustments.cd_percent)}%)`} value={`− ${formatCurrency(totals.cdAmount)}`} muted />
           </div>
           <div className="flex items-center justify-between rounded-xl bg-brand-600 px-5 py-4 text-white">
