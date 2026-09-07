@@ -32,7 +32,7 @@ interface CalcLoading {
 interface CalcAdjustments {
   difference: number;
   freight: number;
-  /** Percentage of Gross Amount, e.g. 2.5 means 2.5%. */
+  /** Percentage of Base Amount, e.g. 2.5 means 2.5%. */
   cd_percent: number;
 }
 
@@ -117,12 +117,13 @@ export function calculateOrderTotals(order: {
   }
 
   grossAmount = round2(grossAmount);
+  const diff = Number.isFinite(order.adjustments.difference) ? order.adjustments.difference : 0;
+  const freight = Number.isFinite(order.adjustments.freight) ? order.adjustments.freight : 0;
+  const baseAmount = round2(grossAmount - diff - freight);
   const closingBalance = calculateClosingBalance(grossAmount, order.adjustments);
   // The rupee amount C.D.% actually removed from the base — i.e. the
   // difference between (Gross − Difference − Freight) and Closing Balance.
-  const cdAmount = round2(
-    grossAmount - order.adjustments.difference - order.adjustments.freight - closingBalance
-  );
+  const cdAmount = round2(baseAmount - closingBalance);
 
   return {
     totalLoadings: order.loadings.length,
@@ -130,6 +131,7 @@ export function calculateOrderTotals(order: {
     freeBags,
     payableBags: totalBags - freeBags,
     grossAmount,
+    baseAmount,
     cdAmount,
     closingBalance,
   };
