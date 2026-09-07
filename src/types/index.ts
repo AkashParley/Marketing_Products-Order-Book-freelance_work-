@@ -64,7 +64,7 @@ export interface Loading {
 export interface OrderAdjustments {
   difference: number;
   freight: number;
-  /** C.D. is entered as a percentage of the Gross Amount, not a flat rupee value. */
+  /** C.D. is entered as a percentage of the Base Amount, not a flat rupee value. */
   cd_percent: number;
 }
 
@@ -100,7 +100,9 @@ export interface OrderTotals {
   freeBags: number;
   payableBags: number;
   grossAmount: number;
-  /** C.D. amount in rupees, derived from grossAmount × adjustments.cd_percent. */
+  /** Gross Amount − Difference − Freight — the figure C.D.% is applied against. */
+  baseAmount: number;
+  /** C.D. amount in rupees, i.e. baseAmount × adjustments.cd_percent / 100. */
   cdAmount: number;
   closingBalance: number;
 }
